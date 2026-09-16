@@ -29,6 +29,9 @@ function OrganizerDashboard() {
   const [companyX, setCompanyX] = useState('');
   const [companyY, setCompanyY] = useState('');
   const [majorsHired, setMajorsHired] = useState('');
+  const [industry, setIndustry] = useState('');
+  const [positionTypes, setPositionTypes] = useState('');
+  const [positionsHiring, setPositionsHiring] = useState('');
   const [yearsHired, setYearsHired] = useState('');
   const [sponsorVisa, setSponsorVisa] = useState('');
   const [showCompanyForm, setShowCompanyForm] = useState(false);
@@ -48,6 +51,9 @@ function OrganizerDashboard() {
   const [editCompanyX, setEditCompanyX] = useState('');
   const [editCompanyY, setEditCompanyY] = useState('');
   const [editCompanyMajorsHired, setEditCompanyMajorsHired] = useState('');
+  const [editCompanyIndustry, setEditCompanyIndustry] = useState('');
+  const [editCompanyPositionTypes, setEditCompanyPositionTypes] = useState('');
+  const [editCompanyPositionsHiring, setEditCompanyPositionsHiring] = useState('');
   const [editCompanyYearsHired, setEditCompanyYearsHired] = useState('');
   const [editCompanySponsorVisa, setEditCompanySponsorVisa] = useState('');
   const [deletingCompanyId, setDeletingCompanyId] = useState(null);
@@ -275,6 +281,9 @@ function OrganizerDashboard() {
     setEditCompanyX(company.x?.toString() || '');
     setEditCompanyY(company.y?.toString() || '');
     setEditCompanyMajorsHired(company.MajorsHired ? company.MajorsHired.join(', ') : '');
+    setEditCompanyIndustry(company.Industry || '');
+    setEditCompanyPositionTypes(company.PositionTypes ? company.PositionTypes.join(', ') : '');
+    setEditCompanyPositionsHiring(company.PositionsHiring ? company.PositionsHiring.join(', ') : '');
     setEditCompanyYearsHired(company.YearsHired ? company.YearsHired.join(', ') : '');
     setEditCompanySponsorVisa(company.SponsorVisa || '');
     setError('');
@@ -291,6 +300,9 @@ function OrganizerDashboard() {
     setEditCompanyX('');
     setEditCompanyY('');
     setEditCompanyMajorsHired('');
+    setEditCompanyIndustry('');
+    setEditCompanyPositionTypes('');
+    setEditCompanyPositionsHiring('');
     setEditCompanyYearsHired('');
     setEditCompanySponsorVisa('');
   }
@@ -343,6 +355,13 @@ function OrganizerDashboard() {
         y: y,
         MajorsHired: editCompanyMajorsHired 
           ? editCompanyMajorsHired.split(',').map(m => m.trim()).filter(m => m)
+          : [],
+        Industry: editCompanyIndustry || null,
+        PositionTypes: editCompanyPositionTypes 
+          ? editCompanyPositionTypes.split(',').map(p => p.trim()).filter(p => p)
+          : [],
+        PositionsHiring: editCompanyPositionsHiring 
+          ? editCompanyPositionsHiring.split(',').map(p => p.trim()).filter(p => p)
           : [],
         YearsHired: editCompanyYearsHired 
           ? editCompanyYearsHired.split(',').map(y => y.trim()).filter(y => y)
@@ -405,7 +424,11 @@ function OrganizerDashboard() {
         booth: boothNumber,
         x: companyX ? parseFloat(companyX) : null,
         y: companyY ? parseFloat(companyY) : null,
+
         MajorsHired: majorsHired ? majorsHired.split(',').map(m => m.trim()) : [],
+        Industry: industry || null,
+        PositionTypes: positionTypes ? positionTypes.split(',').map(p => p.trim()) : [],
+        PositionsHiring: positionsHiring ? positionsHiring.split(',').map(p => p.trim()) : [],
         YearsHired: yearsHired ? yearsHired.split(',').map(y => y.trim()) : [],
         SponsorVisa: sponsorVisa || null
       };
@@ -421,9 +444,13 @@ function OrganizerDashboard() {
       setCompanyX('');
       setCompanyY('');
       setMajorsHired('');
+      setIndustry('');
+      setPositionTypes('');
+      setPositionsHiring('');
       setYearsHired('');
       setSponsorVisa('');
       setShowCompanyForm(false);
+      
       
       // Reset file input
       const fileInput = document.getElementById('companyLogoFile');
@@ -668,13 +695,43 @@ function OrganizerDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Years Hired (comma-separated)</label>
+                  <label className="block text-sm font-medium mb-1">Industry</label>
+                  <input
+                    type="text"
+                    value={industry}
+                    onChange={e => setIndustry(e.target.value)}
+                    className="w-full p-2 border rounded"
+                    placeholder="Manufacturing, Technology, Consulting"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Position Types (comma-separated)</label>
+                  <input
+                    type="text"
+                    value={positionTypes}
+                    onChange={e => setPositionTypes(e.target.value)}
+                    className="w-full p-2 border rounded"
+                    placeholder="Full-Time, Internship, Co-op"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Positions Hiring (comma-separated)</label>
+                  <input
+                    type="text"
+                    value={positionsHiring}
+                    onChange={e => setPositionsHiring(e.target.value)}
+                    className="w-full p-2 border rounded"
+                    placeholder="Industrial Engineer, Data Analyst, Process Engineer"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Anticipated Graduation Dates Hiring For (comma-separated)</label>
                   <input
                     type="text"
                     value={yearsHired}
                     onChange={e => setYearsHired(e.target.value)}
                     className="w-full p-2 border rounded"
-                    placeholder="1st, 2nd, 3rd, 4+"
+                    placeholder="May 2028, December 2028, May 2029"
                   />
                 </div>
                 <div>
@@ -887,13 +944,43 @@ function OrganizerDashboard() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium mb-1">Years Hired (comma-separated)</label>
+                          <label className="block text-sm font-medium mb-1">Industry</label>
+                          <input
+                            type="text"
+                            value={editCompanyIndustry}
+                            onChange={e => setEditCompanyIndustry(e.target.value)}
+                            className="w-full p-2 border rounded"
+                            placeholder="Manufacturing, Technology, Consulting"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Position Types (comma-separated)</label>
+                          <input
+                            type="text"
+                            value={editCompanyPositionTypes}
+                            onChange={e => setEditCompanyPositionTypes(e.target.value)}
+                            className="w-full p-2 border rounded"
+                            placeholder="Full-Time, Internship, Co-op"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Positions Hiring (comma-separated)</label>
+                          <input
+                            type="text"
+                            value={editCompanyPositionsHiring}
+                            onChange={e => setEditCompanyPositionsHiring(e.target.value)}
+                            className="w-full p-2 border rounded"
+                            placeholder="Industrial Engineer, Data Analyst, Process Engineer"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-1">Anticipated Graduation Dates Hiring For (comma-separated)</label>
                           <input
                             type="text"
                             value={editCompanyYearsHired}
                             onChange={e => setEditCompanyYearsHired(e.target.value)}
                             className="w-full p-2 border rounded"
-                            placeholder="1st, 2nd, 3rd, 4+"
+                            placeholder="May 2028, December 2028, May 2029"
                           />
                         </div>
                         <div>
@@ -944,9 +1031,24 @@ function OrganizerDashboard() {
                               Majors: {company.MajorsHired.join(', ')}
                             </p>
                           )}
+                          {company.Industry && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              Industry: {company.Industry}
+                            </p>
+                          )}
+                          {company.PositionTypes && company.PositionTypes.length > 0 && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              Position Types: {company.PositionTypes.join(', ')}
+                            </p>
+                          )}
+                          {company.PositionsHiring && company.PositionsHiring.length > 0 && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              Positions Hiring: {company.PositionsHiring.join(', ')}
+                            </p>
+                          )}
                           {company.YearsHired && company.YearsHired.length > 0 && (
                             <p className="text-xs text-gray-500 mt-1">
-                              Years: {company.YearsHired.join(', ')}
+                              Anticipated Grad Dates: {company.YearsHired.join(', ')}
                             </p>
                           )}
                           {company.SponsorVisa && (
