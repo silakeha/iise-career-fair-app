@@ -21,27 +21,27 @@ function SetViewOnLoad({ bounds, imageWidth, imageHeight }) {
     };
   }, []);
 
-  function doFit() {
-    if (!map || !isMountedRef.current || !map.getContainer()?.parentNode) return;
-    try {
-      const el = map.getContainer();
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
-      if (w <= 0 || h <= 0) return;
-      const bW = imageWidth ?? 1266;
-      const bH = imageHeight ?? 1188;
-      // Use uniform scale so the image is never stretched to 1:1: scale = min(w/bW, h/bH)
-      // In CRS.Simple, scale(zoom) = 2^zoom, so zoom = log2(scale)
-      const scale = Math.min(w / bW, h / bH);
-      const zoom = Math.log2(Math.max(scale, 0.01)); // clamp scale from below
-      const center = [bH / 2, bW / 2];
-      map.setView(center, zoom);
-    } catch (e) {
-      map.fitBounds(bounds, { padding: [20, 20] });
-    }
-  }
-
   useEffect(() => {
+    function doFit() {
+      if (!map || !isMountedRef.current || !map.getContainer()?.parentNode) return;
+      try {
+        const el = map.getContainer();
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        if (w <= 0 || h <= 0) return;
+        const bW = imageWidth ?? 1266;
+        const bH = imageHeight ?? 1188;
+        // Use uniform scale so the image is never stretched to 1:1: scale = min(w/bW, h/bH)
+        // In CRS.Simple, scale(zoom) = 2^zoom, so zoom = log2(scale)
+        const scale = Math.min(w / bW, h / bH);
+        const zoom = Math.log2(Math.max(scale, 0.01)); // clamp scale from below
+        const center = [bH / 2, bW / 2];
+        map.setView(center, zoom);
+      } catch (e) {
+        map.fitBounds(bounds, { padding: [20, 20] });
+      }
+    }
+
     doFit();
     const t = setTimeout(doFit, 100);
     const el = map?.getContainer();

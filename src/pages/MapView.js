@@ -7,6 +7,13 @@ import FloorPlanMap from '../components/FloorPlanMap';
 import VendorModal from '../components/VendorModal';
 import FilterModal from '../components/FilterModal';
 
+// Stable color per booth (same booth = same color across filters)
+const BOOTH_COLORS = [
+  '#e11d48', '#ea580c', '#ca8a04', '#65a30d', '#0d9488', '#2563eb',
+  '#4f46e5', '#7c3aed', '#c026d3', '#db2777', '#0891b2', '#dc2626',
+  '#16a34a', '#9333ea', '#0e7490', '#be123c', '#b45309', '#4d7c0f',
+];
+
 function MapView() {
   const { currentUser, userRole, logout } = useAuth();
   const navigate = useNavigate();
@@ -184,12 +191,6 @@ function MapView() {
     return count;
   }
 
-  // Stable color per booth (same booth = same color across filters)
-  const BOOTH_COLORS = [
-    '#e11d48', '#ea580c', '#ca8a04', '#65a30d', '#0d9488', '#2563eb',
-    '#4f46e5', '#7c3aed', '#c026d3', '#db2777', '#0891b2', '#dc2626',
-    '#16a34a', '#9333ea', '#0e7490', '#be123c', '#b45309', '#4d7c0f',
-  ];
   const boothToColor = useMemo(() => {
     const sortedBooths = [...new Set(filteredVendors.map(v => v.booth != null ? String(v.booth) : '').filter(Boolean))]
       .sort((a, b) => {
