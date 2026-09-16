@@ -1,0 +1,170 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to get user role
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    // Helper function to check if user is organizer
+    function isOrganizer() {
+      return isAuthenticated() && getUserRole() == 'organizer';
+    }
+    
+    // Helper function to check if user is recruiter
+    function isRecruiter() {
+      return isAuthenticated() && getUserRole() == 'recruiter';
+    }
+    
+    // Helper function to check if user is student
+    function isStudent() {
+      return isAuthenticated() && getUserRole() == 'student';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Users can read their own document
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Organizers can read all users (including recruiters)
+      allow read: if isOrganizer();
+      
+      // Users can create their own document (for signup)
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Organizers can create user documents (for recruiter accounts)
+      allow create: if isOrganizer();
+      
+      // Users can update their own document
+      allow update: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Organizers can update any user
+      allow update: if isOrganizer();
+    }
+    
+    // Vendors/Companies collection
+    match /vendors/{vendorId} {
+      // Everyone authenticated can read vendors
+      allow read: if isAuthenticated();
+      
+      // Only organizers can create vendors
+      allow create: if isOrganizer();
+      
+      // Organizers can update any vendor
+      allow update: if isOrganizer();
+      
+      // Organizers can delete any vendor
+      allow delete: if isOrganizer();
+      
+      // Recruiters can update their own company's vendor document
+      // Check if the vendor name matches the recruiter's companyName
+      allow update: if isRecruiter() && 
+        resource.data.name == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyName;
+    }
+    
+    // Resumes collection
+    match /resumes/{resumeId} {
+      // Students can read their own resumes
+      allow read: if isAuthenticated() && resource.data.studentId == request.auth.uid;
+      
+      // Recruiters can read resumes for their company (checked in app logic)
+      allow read: if isRecruiter();
+      
+      // Organizers can read all resumes
+      allow read: if isOrganizer();
+      
+      // Students can create resumes
+      allow create: if isStudent() && request.resource.data.studentId == request.auth.uid;
+      
+      // Students can update their own resumes (e.g. when re-uploading to override)
+      allow update: if isStudent() && resource.data.studentId == request.auth.uid;
+      
+      // Organizers can create resumes
+      allow create: if isOrganizer();
+    }
+    
+    // Resume book collection
+    match /resumeBook/{studentId} {
+      // Recruiters can read all resume book entries
+      allow read: if isRecruiter();
+      
+      // Organizers can read all resume book entries
+      allow read: if isOrganizer();
+      
+      // Students can read and create their own resume book entry
+      allow read, create: if isAuthenticated() && request.auth.uid == studentId;
+      
+      // Students can update their own resume book entry
+      allow update: if isAuthenticated() && request.auth.uid == studentId;
+    }
+    
+    // Config collection (for floor plan configuration)
+    match /config/{configId} {
+      // Everyone authenticated can read config
+      allow read: if isAuthenticated();
+      
+      // Only organizers can write config
+      allow write: if isOrganizer();
+    }
+    
+    // Resume flags collection
+    match /resumeFlags/{flagId} {
+      // Recruiters can read their own flags
+      // Check recruiterId first (short-circuit evaluation)
+      allow read: if isAuthenticated() && 
+                     resource.data.recruiterId == request.auth.uid &&
+                     isRecruiter();
+      
+      // Organizers can read all flags
+      allow read: if isOrganizer();
+      
+      // Recruiters can create flags
+      allow create: if isAuthenticated() && 
+                      request.resource.data.recruiterId == request.auth.uid &&
+                      isRecruiter();
+      
+      // Recruiters can delete their own flags
+      allow delete: if isAuthenticated() && 
+                       resource.data.recruiterId == request.auth.uid &&
+                       isRecruiter();
+    }
+    
+    // Resume comments collection
+    match /resumeComments/{commentId} {
+      // Recruiters can only read their own comments
+      allow read: if isRecruiter() && resource.data.recruiterId == request.auth.uid;
+      
+      // Organizers can read all comments
+      allow read: if isOrganizer();
+      
+      // Recruiters can create comments
+      allow create: if isRecruiter() && request.resource.data.recruiterId == request.auth.uid;
+      
+      // Recruiters can update their own comments
+      allow update: if isRecruiter() && resource.data.recruiterId == request.auth.uid;
+      
+      // Recruiters can delete their own comments
+      allow delete: if isRecruiter() && resource.data.recruiterId == request.auth.uid;
+    }
+    
+    // Company flags collection (students flag companies)
+    match /companyFlags/{flagId} {
+      // Students can read their own flags
+      allow read: if isStudent() && resource.data.studentId == request.auth.uid;
+      
+      // Organizers can read all flags
+      allow read: if isOrganizer();
+      
+      // Students can create flags
+      allow create: if isStudent() && request.resource.data.studentId == request.auth.uid;
+      
+      // Students can delete their own flags
+      allow delete: if isStudent() && resource.data.studentId == request.auth.uid;
+    }
+  }
+}

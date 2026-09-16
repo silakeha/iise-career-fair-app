@@ -1,0 +1,40 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Company logos - authenticated users can upload/read
+    // Note: App-level logic (in OrganizerDashboard/RecruiterDashboard) controls who can actually
+    // create/edit companies, so we allow authenticated uploads here
+    match /company-logos/{logoId} {
+      // Anyone authenticated can read (to display logos)
+      allow read: if isAuthenticated();
+      
+      // Authenticated users can upload/delete logos
+      // The app ensures only organizers and recruiters can access the upload functionality
+      allow write: if isAuthenticated();
+    }
+    
+    // Resumes - students can upload their own, authenticated users can read
+    match /resumes/{userId}/{resumeId} {
+      // Students can read/write their own resumes
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Authenticated users (recruiters/organizers) can read resumes
+      // App logic filters by company/role
+      allow read: if isAuthenticated();
+    }
+    
+    // Floor plan images - authenticated users can read, write controlled by app
+    match /floor-plans/{imageId} {
+      // Anyone authenticated can read
+      allow read: if isAuthenticated();
+      
+      // Authenticated users can upload (app ensures only organizers can access)
+      allow write: if isAuthenticated();
+    }
+  }
+}
