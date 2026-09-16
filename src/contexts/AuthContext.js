@@ -355,6 +355,9 @@ export function AuthProvider({ children }) {
       if (companyData.x !== undefined) updateData.x = companyData.x;
       if (companyData.y !== undefined) updateData.y = companyData.y;
       if (companyData.MajorsHired !== undefined) updateData.MajorsHired = companyData.MajorsHired;
+      if (companyData.Industry !== undefined) updateData.Industry = companyData.Industry;
+      if (companyData.PositionTypes !== undefined) updateData.PositionTypes = companyData.PositionTypes;
+      if (companyData.PositionsHiring !== undefined) updateData.PositionsHiring = companyData.PositionsHiring;
       if (companyData.YearsHired !== undefined) updateData.YearsHired = companyData.YearsHired;
       if (companyData.SponsorVisa !== undefined) updateData.SponsorVisa = companyData.SponsorVisa;
     } 
@@ -369,6 +372,9 @@ export function AuthProvider({ children }) {
       if (companyData.description !== undefined) updateData.description = companyData.description;
       if (companyData.logo !== undefined) updateData.logo = companyData.logo;
       if (companyData.MajorsHired !== undefined) updateData.MajorsHired = companyData.MajorsHired;
+      if (companyData.Industry !== undefined) updateData.Industry = companyData.Industry;
+      if (companyData.PositionTypes !== undefined) updateData.PositionTypes = companyData.PositionTypes;
+      if (companyData.PositionsHiring !== undefined) updateData.PositionsHiring = companyData.PositionsHiring;
       if (companyData.YearsHired !== undefined) updateData.YearsHired = companyData.YearsHired;
       if (companyData.SponsorVisa !== undefined) updateData.SponsorVisa = companyData.SponsorVisa;
     } else {
