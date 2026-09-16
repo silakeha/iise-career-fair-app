@@ -145,9 +145,24 @@ function VendorModal({ vendor, onClose, onSubmitResume, userRole, onFlagChange }
                 <strong className="text-gray-800">Majors Sought:</strong> {vendor.MajorsHired.join(', ')}
               </p>
             )}
+            {vendor.Industry && (
+              <p className="text-gray-600 text-sm sm:text-base">
+                <strong className="text-gray-800">Industry:</strong> {vendor.Industry}
+              </p>
+            )}
+            {vendor.PositionTypes && vendor.PositionTypes.length > 0 && (
+              <p className="text-gray-600 text-sm sm:text-base">
+                <strong className="text-gray-800">Position Types:</strong> {vendor.PositionTypes.join(', ')}
+              </p>
+            )}
+            {vendor.PositionsHiring && vendor.PositionsHiring.length > 0 && (
+              <p className="text-gray-600 text-sm sm:text-base">
+                <strong className="text-gray-800">Positions Hiring:</strong> {vendor.PositionsHiring.join(', ')}
+              </p>
+            )}
             {vendor.YearsHired && vendor.YearsHired.length > 0 && (
               <p className="text-gray-600 text-sm sm:text-base">
-                <strong className="text-gray-800">Years Hired:</strong> {vendor.YearsHired.join(', ')}
+                <strong className="text-gray-800">Anticipated Graduation Dates Hiring For:</strong> {vendor.YearsHired.join(', ')}
               </p>
             )}
             {vendor.SponsorVisa && (
